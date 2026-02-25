@@ -1,4 +1,4 @@
-name: Samsung Galaxy S21 5G Kernel Build
+name: Samsung Galaxy S20 Kernel Build
 
 on:
   workflow_dispatch:
