@@ -17,6 +17,8 @@ if [ ! -f "$TOOLCHAIN_FILE" ]; then
 fi
 tar -xf "$TOOLCHAIN_FILE" -C "$CLANG_PATH" && rm "$TOOLCHAIN_FILE"
 
+export ANDROID_BUILD_TOP=$(pwd)
+
 # OEM Setting
 export PLATFORM_VERSION=11
 export ANDROID_MAJOR_VERSION=r 
@@ -32,3 +34,28 @@ O=out
 
 make ${MAKE_ARGS} exynos9830-x1slte_defconfig gorhanhee.config || exit 1
 make ${MAKE_ARGS} || exit 1
+
+mkdir prebuilts/output
+chmod +x ${ANDROID_BUILD_TOP}/prebuilts/*
+
+# Cooking dtb.img
+# Idea from @xfwdrev exynos2100 kernel source (https://github.com/xfwdrev/android_kernel_samsung_ex2100/blob/12-upstream/build.sh)
+./prebuilts/mkdtimg cfg_create ${ANDROID_BUILD_TOP}/prebuilts/output/dtb.img ${ANDROID_BUILD_TOP}/prebuilts/dt_configs/exynos9830.cfg -d ${ANDROID_BUILD_TOP}/out/arch/arm64/boot/dts/exynos
+
+# Cooking dtbo.img
+# Idea from @xfwdrev exynos2100 kernel source (https://github.com/xfwdrev/android_kernel_samsung_ex2100/blob/12-upstream/build.sh)
+./prebuilts/mkdtimg cfg_create ${ANDROID_BUILD_TOP}/prebuilts/output/dtbo.img ${ANDROID_BUILD_TOP}/prebuilts/dt_configs/x1s.cfg -d ${ANDROID_BUILD_TOP}/out/arch/arm64/boot/dts/samsung
+
+cd ${ANDROID_BUILD_TOP}/prebuilts
+
+# Cooking boot.img
+unzip -jo ${ANDROID_BUILD_TOP}/prebuilts/boot.zip boot.img -d ${ANDROID_BUILD_TOP}/prebuilts/
+./magiskboot unpack boot.img
+cp ${ANDROID_BUILD_TOP}/out/arch/arm64/boot/Image ${ANDROID_BUILD_TOP}/prebuilts/kernel
+cp ${ANDROID_BUILD_TOP}/prebuilts/output/dtb.img ${ANDROID_BUILD_TOP}/prebuilts/dtb
+./magiskboot repack boot.img
+cp ${ANDROID_BUILD_TOP}/prebuilts/new-boot.img ${ANDROID_BUILD_TOP}/prebuilts/output/boot.img
+
+# Cooking flashable file
+cd ${ANDROID_BUILD_TOP}/prebuilts/output
+tar -cvf x1s_KSUN_Odin.tar boot.img dtbo.img

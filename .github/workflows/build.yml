@@ -29,3 +29,10 @@ jobs:
     - name: Kernel Build
       run: |   
         ./build.sh
+
+    - name: Upload Artifacts Kernel File
+      uses: actions/upload-artifact@v4
+      with:
+        name: "x1s_Kernel_File"
+        path: |
+          ./prebuilts/output/*        
