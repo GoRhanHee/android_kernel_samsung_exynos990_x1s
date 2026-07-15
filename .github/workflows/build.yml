@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest 
+    runs-on: ubuntu-22.04
 
     steps:
     - name: Import Kernel Source
@@ -16,11 +16,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y \
           build-essential git libssl-dev bc flex bison \
-          libncurses5-dev libncurses-dev cpio zip unzip \
+          libncurses5-dev libncurses-dev libtinfo5 cpio zip unzip \
           python3 curl rsync kmod libelf-dev \
           lz4 tar openssl python3-pip \
           gcc clang
-        wget http://security.ubuntu.com/ubuntu/pool/universe/n/ncurses/libtinfo5_6.3-2ubuntu0.1_amd64.deb && sudo dpkg -i libtinfo5_6.3-2ubuntu0.1_amd64.deb 
 
     - name: Setting Scripts Permission
       run: |    
@@ -35,4 +34,4 @@ jobs:
       with:
         name: "x1s_Kernel_File"
         path: |
-          ./prebuilts/output/*        
+          ./prebuilts/output/*
