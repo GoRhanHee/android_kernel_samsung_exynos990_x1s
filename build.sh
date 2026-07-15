@@ -58,4 +58,4 @@ cp ${ANDROID_BUILD_TOP}/prebuilts/new-boot.img ${ANDROID_BUILD_TOP}/prebuilts/ou
 
 # Cooking flashable file
 cd ${ANDROID_BUILD_TOP}/prebuilts/output
-tar -cvf x1s_KSUN_Odin.tar boot.img dtbo.img
+tar -cvf x1s_KSU_Odin.tar boot.img dtbo.img
